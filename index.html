@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <style>
         table{
-            /*display: none;*/
+            display: none;
+        }
+        td:first-letter{
+            text-transform: uppercase;
         }
     </style>
     <title>Bienvenido</title>
@@ -18,15 +21,15 @@
     <h1>¿Qué tal hace en el mundo?</h1>
 </header>
 <main class="container">
-    <input class="form-control" type="text" id="ciudad" placeholder="Introduce una ciudad"><br>
+    <input class="form-control" type="text" id="ciudad" placeholder="Introduce una ciudad con su nombre original"><br>
     <button id="boton" class="btn btn-primary">Predicción meteorológica</button>
     <br><br>
     <table class="table" id="tabla">
         <thead>
         <tr>
-            <th scope="col">Fecha</th>
-            <th scope="col">Temperatura Mínima</th>
-            <th scope="col">Temperatura Maxima</th>
+            <th scope="col">Tres próximas horas</th>
+            <th scope="col">Temperatura Mínima(ºC)</th>
+            <th scope="col">Temperatura Maxima(ºC)</th>
             <th scope="col">Descripción</th>
             </tr>
         </thead>
@@ -37,22 +40,22 @@
 <script>
     $(function () {
         $("#boton").on("click",function () {
-            var ciudad=$("#ciudad").val();
-            //$("#tabla").css({display:"block"});
-            $.ajax({
+            var ciudad=$("#ciudad").val();//Se guarda el valor que el usuario ha introducido en el input
+            $("#prediccion").empty();//Vacia la capa que contiene los datos
+            $("#tabla").css({display:"table"});//Muestra la tabla una vez que el usuario busca la predicción de una ciudad
+            $.ajax({//Petición ajax al servicio que proporciona los datos meteorológicos
                 method:"GET",
                 url:"http://api.openweathermap.org/data/2.5/forecast",
                 data:{
                     q:ciudad,
                     mode:"json",
                     appid:"0e730b914033e9bcc67e76cf717518da",
-                    units:"metric",
-                    lang:"es"
+                    units:"metric",//parámetro para obtener las temperaturas en grados centigrados
+                    lang:"es"//parámetro para obtener las descripciones en español
                 }
             }).done(function (data) {
                 prediccion=data["list"];
-                for(tiempo of prediccion){
-                    console.log(tiempo);
+                for(tiempo of prediccion){//bucle para poder mostrar al usuario la información que desea
                     $("#prediccion").append("<tr><td>"+tiempo["dt_txt"]+"</td><td>"+tiempo["main"]["temp_min"]+"</td><td>"+tiempo["main"]["temp_max"]+"</td><td>"+tiempo["weather"][0]["description"]+"</td></tr>")
                 }
             })
